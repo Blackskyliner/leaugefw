@@ -15,6 +15,9 @@ class Config implements ConfigurationInterface
 
     public function __invoke() : ConfigurationInterface
     {
+        // Debug Toggle
+        $this->getContainer()->add('debug', false);
+
         // Set some directory defaults
         $this->getContainer()->add('vars_directory', realpath(__DIR__ . '/../../var'));
 
