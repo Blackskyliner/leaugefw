@@ -20,7 +20,7 @@ interface ManagerInterface
      *
      * @return bool
      */
-    public function save($entity);
+    public function save($entity) : bool;
 
     /**
      * Deletes the given entity from the database.
@@ -29,14 +29,14 @@ interface ManagerInterface
      *
      * @return bool
      */
-    public function delete($entity);
+    public function delete($entity) : bool;
 
     /**
      * Search for an single entity and return it, if found by the given (primary) identifier.
      *
      * @param mixed $identifier
      *
-     * @return object|null
+     * @return mixed
      */
     public function find($identifier);
 
@@ -49,7 +49,7 @@ interface ManagerInterface
      *
      * @param array $where
      *
-     * @return object|null
+     * @return mixed
      */
     public function findBy(array $where = []);
 }

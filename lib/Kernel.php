@@ -7,7 +7,6 @@ use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
 use League\Route\Http\Exception;
 use League\Route\RouteCollection;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
@@ -30,9 +29,9 @@ class Kernel implements ContainerAwareInterface, KernelInterface
      *
      * @param ServerRequestInterface $request
      *
-     * @return Kernel
+     * @return KernelInterface
      */
-    public function handle(ServerRequestInterface $request)
+    public function handle(ServerRequestInterface $request) : KernelInterface
     {
         /** @var ResponseInterface $response */
         $response = $this->getContainer()->get('response');
@@ -57,9 +56,9 @@ class Kernel implements ContainerAwareInterface, KernelInterface
      * @param ServerRequestInterface  $request
      * @param ResponseInterface $response
      *
-     * @return Kernel
+     * @return KernelInterface
      */
-    public function terminate(ServerRequestInterface $request, ResponseInterface $response)
+    public function terminate(ServerRequestInterface $request, ResponseInterface $response) : KernelInterface
     {
         $this->getResponseEmitter()->emit($response);
 
@@ -71,7 +70,7 @@ class Kernel implements ContainerAwareInterface, KernelInterface
      *
      * @return EmitterInterface
      */
-    protected function getResponseEmitter()
+    protected function getResponseEmitter() : EmitterInterface
     {
         return $this->getContainer()->get(EmitterInterface::class);
     }
@@ -81,7 +80,7 @@ class Kernel implements ContainerAwareInterface, KernelInterface
      *
      * @return RouteCollection
      */
-    protected function getRouter()
+    protected function getRouter() : RouteCollection
     {
         return $this->getContainer()->get('router');
     }

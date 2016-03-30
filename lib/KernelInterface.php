@@ -15,7 +15,7 @@ interface KernelInterface
      *
      * @return KernelInterface
      */
-    public function handle(ServerRequestInterface $request);
+    public function handle(ServerRequestInterface $request) : KernelInterface;
 
     /**
      * Will be called when the Kernel terminates.
@@ -26,5 +26,5 @@ interface KernelInterface
      *
      * @return KernelInterface
      */
-    public function terminate(ServerRequestInterface $request, ResponseInterface $response);
+    public function terminate(ServerRequestInterface $request, ResponseInterface $response) : KernelInterface;
 }

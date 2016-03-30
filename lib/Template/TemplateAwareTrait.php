@@ -3,22 +3,41 @@ declare(strict_types = 1);
 
 namespace LeagueFw\Template;
 
+/**
+ * Implements the TemplateAwareInterface
+ */
 trait TemplateAwareTrait
 {
     /** @var EngineInterface */
     private $engine;
 
-    public function setTemplateEngine(EngineInterface $engine)
+    /**
+     * @param EngineInterface $engine
+     *
+     * @return TemplateAwareInterface
+     */
+    public function setTemplateEngine(EngineInterface $engine) : TemplateAwareInterface
     {
         $this->engine = $engine;
+        
+        return $this;
     }
 
-    public function getTemplateEngine()
+    /**
+     * @return EngineInterface
+     */
+    public function getTemplateEngine() : EngineInterface
     {
         return $this->engine;
     }
 
-    protected function renderTemplate($template, array $params = [])
+    /**
+     * @param string $template
+     * @param array $params
+     *
+     * @return string
+     */
+    protected function renderTemplate(string $template, array $params = []) : string
     {
         return $this->engine->render($template, $params);
     }

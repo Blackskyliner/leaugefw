@@ -17,7 +17,7 @@ class Routes implements ConfigurationInterface
 {
     use ContainerAwareTrait;
     
-    public function __invoke()
+    public function __invoke() : ConfigurationInterface
     {
         /** @var RouteCollectionInterface $router */
         $router = $this->getContainer()->get('router');
@@ -31,6 +31,8 @@ class Routes implements ConfigurationInterface
 
         $router->get('/about', array($this->getContainer()->get(AboutController::class), 'indexAction'));
         $router->get('/contact', $this->getContainer()->get(ContactAction::class));
+
+        return $this;
     }
 
 }

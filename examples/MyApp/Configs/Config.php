@@ -13,7 +13,7 @@ class Config implements ConfigurationInterface
 {
     use ContainerAwareTrait;
 
-    public function __invoke()
+    public function __invoke() : ConfigurationInterface
     {
         // Set some directory defaults
         $this->getContainer()->add('vars_directory', realpath(__DIR__ . '/../../var'));
@@ -34,5 +34,7 @@ class Config implements ConfigurationInterface
                 realpath(__DIR__ . '/../Views')
             ])
         ]);
+        
+        return $this;
     }
 }

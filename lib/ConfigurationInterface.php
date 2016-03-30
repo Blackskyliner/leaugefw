@@ -7,5 +7,5 @@ use League\Container\ContainerAwareInterface;
 
 interface ConfigurationInterface extends ContainerAwareInterface
 {
-    public function __invoke();
+    public function __invoke() : ConfigurationInterface;
 }

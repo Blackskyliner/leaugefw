@@ -24,7 +24,7 @@ class Services implements ConfigurationInterface
     /**
      * @return Services
      */
-    protected function registerControllers()
+    protected function registerControllers() : Services
     {
         // Register Controller/Actions
         $this->getContainer()->add(ContactAction::class, ContactAction::class);
@@ -36,7 +36,7 @@ class Services implements ConfigurationInterface
     /**
      * @return Services
      */
-    protected function registerEloquent()
+    protected function registerEloquent() : Services
     {
         // Register Eloquent
         $this->getContainer()->add('Eloquent', Manager::class);
@@ -61,7 +61,7 @@ class Services implements ConfigurationInterface
     /**
      * @return Services
      */
-    protected function registerSwiftMailer()
+    protected function registerSwiftMailer() : Services
     {
         // Register Mailer
         $this->getContainer()->share(\Swift_Transport::class, function () {
@@ -77,7 +77,8 @@ class Services implements ConfigurationInterface
     /**
      * @return Services
      */
-    protected function registerTwig(){
+    protected function registerTwig() : Services
+    {
         // Template Stuff
         // Register Twig
         $this->getContainer()->share(\Twig_LoaderInterface::class, function () {
@@ -104,9 +105,9 @@ class Services implements ConfigurationInterface
     }
 
     /**
-     * @return Services
+     * @return ConfigurationInterface
      */
-    public function __invoke()
+    public function __invoke() : ConfigurationInterface
     {
         return $this->registerControllers()
             ->registerEloquent()

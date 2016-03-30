@@ -70,9 +70,9 @@ class Bootstrap
      *
      * @param array|ConfigurationInterface[] $configurationInterfaces
      *
-     * @return Kernel
+     * @return KernelInterface
      */
-    public static function createAndRun(array $configurationInterfaces = [])
+    public static function createAndRun(array $configurationInterfaces = []) : KernelInterface
     {
         return self::create($configurationInterfaces)->run();
     }
@@ -84,7 +84,7 @@ class Bootstrap
      *
      * @return Bootstrap
      */
-    public static function create(array $configurationInterfaces = [])
+    public static function create(array $configurationInterfaces = []) : Bootstrap
     {
         return new self($configurationInterfaces);
     }
@@ -92,7 +92,7 @@ class Bootstrap
     /**
      * Boot the basic DI Container.
      */
-    public function boot()
+    public function boot() : Bootstrap
     {
         return $this->createContainer()
             ->registerExceptionHandler()
@@ -105,7 +105,7 @@ class Bootstrap
     /**
      * @return Bootstrap
      */
-    protected function registerConfigurationInterfaces()
+    protected function registerConfigurationInterfaces() : Bootstrap
     {
         if ($this->booted['application']) {
             return $this;
@@ -124,7 +124,7 @@ class Bootstrap
     /**
      * @return Bootstrap
      */
-    protected function registerKernel()
+    protected function registerKernel() : Bootstrap
     {
         // Early test if we are already booted/registered.
         if ($this->booted['kernel']) {
@@ -176,7 +176,7 @@ class Bootstrap
     /**
      * @return Bootstrap
      */
-    protected function registerRouter()
+    protected function registerRouter() : Bootstrap
     {
         if (!$this->container->has('router')) {
             // Register Router + Strategy
@@ -206,7 +206,7 @@ class Bootstrap
     /**
      * @return Bootstrap
      */
-    protected function registerContainerReflection()
+    protected function registerContainerReflection() : Bootstrap
     {
         // Container Reflections if not already registered
         if (!$this->container->has(Container::class)) {
@@ -226,7 +226,7 @@ class Bootstrap
     /**
      * @return Bootstrap
      */
-    protected function registerExceptionHandler()
+    protected function registerExceptionHandler() : Bootstrap
     {
         // Better Exception Handling.
         $runner = new Runner();
@@ -242,7 +242,7 @@ class Bootstrap
     /**
      * @return Bootstrap
      */
-    protected function createContainer()
+    protected function createContainer() : Bootstrap
     {
         if ($this->booted['container']) {
             return $this;
@@ -262,9 +262,9 @@ class Bootstrap
      * It will then call all registered ConfigurationInterfaces.
      * Finally the Request gets hand down into the Kernel::handle to get the Application up and running.
      *
-     * @return Kernel
+     * @return KernelInterface
      */
-    public function run()
+    public function run() : KernelInterface
     {
         return $this
             ->boot()
@@ -277,7 +277,7 @@ class Bootstrap
      *
      * @return Bootstrap
      */
-    public function addConfigurationInterface(ConfigurationInterface $ci)
+    public function addConfigurationInterface(ConfigurationInterface $ci) : Bootstrap
     {
         $this->ci->append($ci);
 
@@ -294,7 +294,7 @@ class Bootstrap
      *
      * @return Bootstrap
      */
-    private function setKernel(KernelInterface $kernel)
+    private function setKernel(KernelInterface $kernel) : Bootstrap
     {
         $this->kernel = $kernel;
 
@@ -304,15 +304,15 @@ class Bootstrap
     /**
      * @return KernelInterface
      */
-    protected function getKernel()
+    protected function getKernel() : KernelInterface
     {
-        return $this->getKernel();
+        return $this->kernel;
     }
 
     /**
      * @return \ArrayObject|ConfigurationInterface[]
      */
-    protected function getConfigurationInterfaces()
+    protected function getConfigurationInterfaces() : \ArrayObject
     {
         return $this->ci;
     }

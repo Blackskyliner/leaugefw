@@ -3,8 +3,12 @@ declare(strict_types = 1);
 
 namespace LeagueFw\Template;
 
+/**
+ * This class implements the Twig Template Engine from SensioLabs.
+ */
 class TwigEngine implements EngineInterface
 {
+    /** @var \Twig_Environment  */
     protected $environment;
 
     /**
@@ -20,7 +24,7 @@ class TwigEngine implements EngineInterface
     /**
      * {@inheritdoc}
      */
-    public function render($template, $params)
+    public function render($template, $params) : string
     {
         return $this->environment->render($template, $params);
     }
@@ -28,17 +32,19 @@ class TwigEngine implements EngineInterface
     /**
      * {@inheritdoc}
      */
-    public function registerFilter($name, $callable)
+    public function registerFilter($name, $callable) : EngineInterface
     {
         $this->environment->addFilter($name, $callable);
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function registerFunction($name, $callable)
+    public function registerFunction($name, $callable) : EngineInterface
     {
         $this->environment->addFunction($name, $callable);
+        return $this;
     }
 
 }
