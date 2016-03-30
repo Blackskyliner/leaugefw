@@ -3,8 +3,6 @@ declare(strict_types = 1);
 
 namespace LeagueFw;
 
-use League\BooBoo\Formatter\HtmlTableFormatter;
-use League\BooBoo\Runner;
 use League\Container\Container;
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerInterface;
@@ -15,6 +13,9 @@ use League\Route\Strategy\StrategyAwareInterface;
 use League\Route\Strategy\StrategyInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Whoops\Handler\HandlerInterface;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\EmitterInterface;
 use Zend\Diactoros\Response\SapiEmitter;
@@ -230,12 +231,24 @@ class Bootstrap
     protected function registerExceptionHandler() : Bootstrap
     {
         // Better Exception Handling.
+        /*
         $runner = new Runner();
         $runner->pushFormatter(new HtmlTableFormatter());
         $runner->setErrorPageFormatter(new HtmlTableFormatter());
         $runner->register();
-
         $this->container->share(Runner::class, $runner);
+        */
+
+        // Because leauge/booboo is not PHP7 compatible
+        $whoopsFormatter = new PrettyPageHandler();
+        $whoopsFormatter->setEditor('phpstorm');
+
+        $whoops = new Run();
+        $whoops->pushHandler($whoopsFormatter);
+        $whoops->register();
+
+        $this->container->share(Run::class, $whoops);
+        $this->container->share(HandlerInterface::class, $whoopsFormatter);
 
         return $this;
     }
