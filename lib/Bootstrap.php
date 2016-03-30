@@ -113,7 +113,8 @@ class Bootstrap
 
         // Call Configurations
         foreach ($this->ci as $ci) {
-            call_user_func($ci, $this->container);
+            $ci->setContainer($this->container);
+            call_user_func($ci);
         }
 
         $this->booted['application'];
