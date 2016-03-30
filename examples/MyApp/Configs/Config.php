@@ -19,7 +19,7 @@ class Config implements ConfigurationInterface
         $this->getContainer()->add('debug', false);
 
         // Set some directory defaults
-        $this->getContainer()->add('vars_directory', realpath(__DIR__ . '/../../var'));
+        $this->getContainer()->add('vars_directory', realpath(__DIR__ . '/../../../var'));
 
         // Configure Database Layer (Eloquent)
         $this->getContainer()->add('eloquent_connections', [
