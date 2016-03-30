@@ -3,9 +3,16 @@ declare(strict_types = 1);
 
 namespace MyApp\Configs;
 
-use Illuminate\Contracts\Events\Dispatcher as EloquentEventDispatcherInterface;
-use Illuminate\Database\Capsule\Manager;
-use Illuminate\Events\Dispatcher as EloquentEventDispatcher;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\Reader;
+use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\EventManager;
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Setup;
 use League\Container\ContainerAwareTrait;
 use LeagueFw\ConfigurationInterface;
 use LeagueFw\Template\EngineInterface;
@@ -13,6 +20,7 @@ use LeagueFw\Template\TemplateAwareInterface;
 use LeagueFw\Template\TwigEngine;
 use MyApp\Actions\ContactAction;
 use MyApp\Controllers\AboutController;
+use MyApp\Models\UserManager;
 
 /**
  * This Configuration class registers all services within the application container.
@@ -36,23 +44,54 @@ class Services implements ConfigurationInterface
     /**
      * @return Services
      */
-    protected function registerEloquent() : Services
+    protected function registerDoctrine() : Services
     {
-        // Register Eloquent
-        $this->getContainer()->add('Eloquent', Manager::class);
-        $this->getContainer()->share(EloquentEventDispatcherInterface::class, EloquentEventDispatcher::class);
-        $this->getContainer()->share(Manager::class, function () {
-            $capsule = new Manager;
+        // LiveCycle Events
+        $this->getContainer()->share(EventManager::class, EventManager::class);
 
-            foreach ($this->getContainer()->get('eloquent_connections') as $name => $config) {
-                $capsule->addConnection($config, $name);
-            }
+        // Annotation Stuff
+        $this->getContainer()->share(Reader::class, function(){
+            return new AnnotationReader();
+        });
 
-            $capsule->setEventDispatcher($this->getContainer()->get(EloquentEventDispatcherInterface::class));
-            $capsule->setAsGlobal();
-            $capsule->bootEloquent();
+        // Configuration
+        $this->getContainer()->share(Configuration::class, function () : Configuration {
+            $config = Setup::createConfiguration(
+                $this->getContainer()->get('debug'),
+                null,
+                $this->getContainer()->get(Cache::class)
+            );
 
-            return $capsule;
+            $config->setMetadataDriverImpl(
+                $this->getContainer()->get(MappingDriver::class)
+            );
+
+            $config->setAutoGenerateProxyClasses($this->getContainer()->get('debug'));
+
+            // Shorthand Namespace for Annotation, Query and Repository Stuff
+            $config->addEntityNamespace('MyApp', 'MyApp\\Models');
+
+            return $config;
+        });
+
+        // Cache
+        $this->getContainer()->share(Cache::class, function () : Cache {
+            // (or no cache in this ArrayCache case)
+            return new ArrayCache();
+        });
+
+        // Doctrine! No Really! The EntityManager ;)
+        $this->getContainer()->share(EntityManagerInterface::class, function () : EntityManagerInterface {
+            return EntityManager::create(
+                $this->getContainer()->get('doctrine_connection'),
+                $this->getContainer()->get(Configuration::class),
+                $this->getContainer()->get(EventManager::class)
+            );
+        });
+        
+        // Now lets wrap doctrine
+        $this->getContainer()->share(UserManager::class, function(){
+            return new UserManager($this->container->get(EntityManagerInterface::class));
         });
 
         return $this;
@@ -110,7 +149,7 @@ class Services implements ConfigurationInterface
     public function __invoke() : ConfigurationInterface
     {
         return $this->registerControllers()
-            ->registerEloquent()
+            ->registerDoctrine()
             ->registerSwiftMailer()
             ->registerTwig();
     }
